@@ -15,12 +15,28 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+
+from django.conf.urls.static import static
+from django.conf import settings
+
+from gtapp.views import MainPage, RegistrUserView
 
 # from gtapp.views import create_pdp
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # path('new_pdp/', create_pdp),          # фенкция для наполнения базы
-]
+    path('', MainPage.home, name='home'),
+    path('accounts/', include('django.contrib.auth.urls')),
+    path('registration', RegistrUserView.as_view(), name='registration'),
+    path('profile', .as_view(), name='profile'),
+
+    path('api-auth', include('rest_framework.urls')),
+    path('auth/', include('djoser.urls')),
+
+    # path('new_pdp/', create_pdp),          # функция для наполнения базы
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+
+
 

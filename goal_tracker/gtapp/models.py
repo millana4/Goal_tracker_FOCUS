@@ -38,11 +38,12 @@ class CustomUserManager(BaseUserManager):
 # Модель пользователя
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(verbose_name='email', max_length=254, unique=True)
-    username = models.CharField(verbose_name='Пользователь', max_length=50, default='Пользователь')
+    username = models.CharField(verbose_name='Имя', max_length=50, default='Пользователь')
     pdp = models.CharField(verbose_name='ИПР', max_length=300, blank=True, null=True)
     personal = models.CharField(verbose_name='Личные цели', max_length=300, blank=True, null=True)
     finance = models.CharField(verbose_name='Финансовые цели', max_length=300, blank=True, null=True)
     idea = models.CharField(verbose_name='Идеи на будущее', max_length=300, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     is_admin = models.BooleanField(verbose_name='Админ', default=False)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -71,6 +72,7 @@ class Pdp(models.Model):
     smart = models.CharField(verbose_name='Карьерная цель по SMART', max_length=700, null=True, blank=True)
     expected_date = models.DateField(verbose_name='Срок', blank=True, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь', related_name='pdps')
+    created_at = models.DateTimeField(auto_now_add=True)
     done = models.BooleanField(verbose_name='Статус', default=False)
 
     class Meta:
@@ -134,6 +136,7 @@ class Personal_goal(models.Model):
     personal_goal_smart = models.CharField(verbose_name='Личная цель по SMART', max_length=700, null=True, blank=True)
     expected_date = models.DateField(verbose_name='Срок', blank=True, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь', related_name='personal_goal')
+    created_at = models.DateTimeField(auto_now_add=True)
     done = models.BooleanField(verbose_name='Статус', default=False)
 
     class Meta:
@@ -180,6 +183,7 @@ class Financial_goal(models.Model):
                                             blank=True)
     expected_date = models.DateField(verbose_name='Срок', blank=True, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь', related_name='financial_goal')
+    created_at = models.DateTimeField(auto_now_add=True)
     done = models.BooleanField(verbose_name='Статус', default=False)
 
     class Meta:
@@ -223,6 +227,7 @@ class Ideas(models.Model):
     idea_title = models.CharField(verbose_name='Заголовок', max_length=100)
     description = models.CharField(verbose_name='Описание', max_length=5000, null=True, blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь', related_name='ideas')
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         verbose_name = 'Идея'

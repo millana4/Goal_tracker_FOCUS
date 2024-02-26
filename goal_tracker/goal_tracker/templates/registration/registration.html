@@ -1,0 +1,24 @@
+{% extends "base_generic1.html" %}
+
+{% load rest_framework %}
+
+{% block content %}
+
+<h1>Регистрация</h1>
+    <table>
+        <tr>
+            <th width=»50%»></th>
+            <th width=»50%»></th>
+        </tr>
+        <tr>
+            <td>
+                <form action="{% url 'registration' %}" method="POST">
+                {% csrf_token %}
+                {% render_form serializer %}
+                <input type="submit" value="Save">
+                </form>
+            </td>
+        <td></td>
+        </tr>
+    </table>
+{% endblock %}
