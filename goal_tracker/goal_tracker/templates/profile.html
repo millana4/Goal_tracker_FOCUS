@@ -1,0 +1,79 @@
+{% extends "base_generic2.html" %}
+
+{% load rest_framework %}
+
+{% block content %}
+<h1>Личный кабинет</h1>
+
+
+<table border="0", width="100%">
+   <tr>
+        <th></th>
+        <th></th>
+   </tr>
+   <tr>
+    <td><p>Приветствую, {{ username }}!</p></td>
+    <td>
+        <form action="achievements.html" target=>
+                    <button>Посмотреть достижения</button>
+        </form>
+        <br><br>
+        <form action="progress.html" target=>
+                    <button>Отметить прогресс</button>
+        </form>
+    </td>
+  </tr>
+ </table>
+
+<h2>Профессиональные цели (ИПР)</h2>
+    {% if flag_pdp == False %}
+        <p>Для начала заполните, пожалуйста, ваш план индивидуального развития.</p>
+        <form action="pdp.html" target=>
+            <button>Заполнить</button>
+        </form>
+    {% else %}
+        <form action="pdp.html" target=>
+            <button>Посмотреть</button>
+        </form>
+    {% endif %}
+
+<h2>Личные цели</h2>
+    {% if flag_pdp == False %}
+        <p>Здесь пока ничего нет, поэтому заполните, пожалуйста, форму.</p>
+        <form action="personal.html" target=>
+            <button>Заполнить</button>
+        </form>
+    {% else %}
+        <form action="personal.html" target=>
+            <button>Посмотреть</button>
+        </form>
+    {% endif %}
+
+<h2>Финансовые цели</h2>
+    {% if flag_pdp == False %}
+        <p>Вы еще не заполнили финансовые цели.</p>
+        <form action="finance.html" target=>
+            <button>Заполнить</button>
+        </form>
+    {% else %}
+        <form action="finance.html" target=>
+            <button>Посмотреть</button>
+        </form>
+    {% endif %}
+
+<h2>Идеи на будущее</h2>
+    {% if flag_pdp == False %}
+        <p>Ваш список идей пока пуст</p>
+        <form action="idea.html" target=>
+            <button>Заполнить</button>
+        </form>
+    {% else %}
+        <form action="idea.html" target=>
+            <button>Посмотреть</button>
+        </form>
+    {% endif %}
+
+
+
+
+{% endblock %}

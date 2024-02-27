@@ -167,3 +167,5 @@ DJOSER = {
     #  чтобы при регистрации не отправлялась почта для подтверждение EMAIL, так как разрабатываю на локальном сервере
     'SEND_ACTIVATION_EMAIL': False,
 }
+
+LOGIN_REDIRECT_URL = '/profile/'

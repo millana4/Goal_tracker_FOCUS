@@ -39,10 +39,6 @@ class CustomUserManager(BaseUserManager):
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(verbose_name='email', max_length=254, unique=True)
     username = models.CharField(verbose_name='Имя', max_length=50, default='Пользователь')
-    pdp = models.CharField(verbose_name='ИПР', max_length=300, blank=True, null=True)
-    personal = models.CharField(verbose_name='Личные цели', max_length=300, blank=True, null=True)
-    finance = models.CharField(verbose_name='Финансовые цели', max_length=300, blank=True, null=True)
-    idea = models.CharField(verbose_name='Идеи на будущее', max_length=300, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     is_admin = models.BooleanField(verbose_name='Админ', default=False)
     is_active = models.BooleanField(default=True)
@@ -222,7 +218,7 @@ class Financial_activity(models.Model):
 
 
 # Модель для заметок, в которых можно записывать идеи на долгий срок.
-class Ideas(models.Model):
+class Idea(models.Model):
     objects = models.manager.Manager()
     idea_title = models.CharField(verbose_name='Заголовок', max_length=100)
     description = models.CharField(verbose_name='Описание', max_length=5000, null=True, blank=True)

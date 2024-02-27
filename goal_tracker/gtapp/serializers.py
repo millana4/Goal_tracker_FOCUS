@@ -35,3 +35,4 @@ class RegistrUserSerializer(serializers.ModelSerializer):
         # Возвращаем нового пользователя 
         return user
 
+

@@ -20,7 +20,7 @@ from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
 
-from gtapp.views import MainPage, RegistrUserView
+from gtapp.views import MainPage, RegistrUserView, ProfileView
 
 # from gtapp.views import create_pdp
 
@@ -28,8 +28,16 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', MainPage.home, name='home'),
     path('accounts/', include('django.contrib.auth.urls')),
-    path('registration', RegistrUserView.as_view(), name='registration'),
-    path('profile', .as_view(), name='profile'),
+    path('registration/', RegistrUserView.as_view(), name='registration'),
+
+    path('profile/', ProfileView.look_profile, name='profile'),
+    #path('profile/pdp/', , name='pdp'),
+    #path('profile/personal/', , name='personal'),
+    #path('profile/finance/', , name='finance'),
+    #path('profile/idea/', , name='idea'),
+    # path('profile/achievements/', , name='achievements'),
+    # path('profile/progress/', , name='progress'),
+    #path('profile/settings/', , name='settings'),
 
     path('api-auth', include('rest_framework.urls')),
     path('auth/', include('djoser.urls')),
