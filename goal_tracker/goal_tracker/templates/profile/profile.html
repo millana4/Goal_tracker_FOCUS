@@ -12,7 +12,9 @@
         <th></th>
    </tr>
    <tr>
-    <td><p>Приветствую, {{ username }}!</p></td>
+    <td><p>Приветствую, {{ username }}!</p>
+        <p>Здесть вы можете добавлять цели, просматривать и редактировать их.</p>
+    </td>
     <td>
         <form action="achievements.html" target=>
                     <button>Посмотреть достижения</button>
@@ -25,20 +27,20 @@
   </tr>
  </table>
 
-<h2>Профессиональные цели (ИПР)</h2>
+<h2 style="font-size: 20px">Карьерные цели и ИПР</h2>
     {% if flag_pdp == False %}
         <p>Для начала заполните, пожалуйста, ваш план индивидуального развития.</p>
-        <form action="pdp.html" target=>
+        <form action="{% url 'pdp_creation' %}" method="GET">
             <button>Заполнить</button>
         </form>
     {% else %}
-        <form action="pdp.html" target=>
+        <form action="{% url 'pdp' %}" target=>
             <button>Посмотреть</button>
         </form>
     {% endif %}
 
-<h2>Личные цели</h2>
-    {% if flag_pdp == False %}
+<h2 style="font-size: 20px">Личные цели</h2>
+    {% if flag_personal == False %}
         <p>Здесь пока ничего нет, поэтому заполните, пожалуйста, форму.</p>
         <form action="personal.html" target=>
             <button>Заполнить</button>
@@ -49,8 +51,8 @@
         </form>
     {% endif %}
 
-<h2>Финансовые цели</h2>
-    {% if flag_pdp == False %}
+<h2 style="font-size: 20px">Финансовые цели</h2>
+    {% if flag_finance == False %}
         <p>Вы еще не заполнили финансовые цели.</p>
         <form action="finance.html" target=>
             <button>Заполнить</button>
@@ -61,9 +63,9 @@
         </form>
     {% endif %}
 
-<h2>Идеи на будущее</h2>
-    {% if flag_pdp == False %}
-        <p>Ваш список идей пока пуст</p>
+<h2 style="font-size: 20px">Идеи на будущее</h2>
+    {% if flag_idea == False %}
+        <p>Ваш список идей пока пуст.</p>
         <form action="idea.html" target=>
             <button>Заполнить</button>
         </form>

@@ -83,18 +83,24 @@ class Pdp(models.Model):
 # Описываются компетенции, которые нужно развить, чтобы достичь карьерной цели.
 class Сompetence(models.Model):
     LEVEL_CHOICES = {
-        '0': 'Не владею',
-        '1': 'Есть предстваление',
-        '2': 'Есть небольшой опыт',
-        '3': 'Немного владею',
-        '4': 'Неплохо владею',
-        '5': 'Полностью владею',
+        'Не владею': 'Не владею',
+        'Есть представление': 'Есть представление',
+        'Есть небольшой опыт': 'Есть небольшой опыт',
+        'Немного владею': 'Немного владею',
+        'Неплохо владею': 'Неплохо владею',
+        'Полностью владею': 'Полностью владею',
     }
 
     objects = models.manager.Manager()
     competence = models.CharField(verbose_name='Компетенция', max_length=200)
     current_level = models.CharField(verbose_name='Уровень владения', choices=LEVEL_CHOICES, null=True, blank=True)
     pdp = models.ForeignKey(Pdp, on_delete=models.CASCADE, verbose_name='ИПР', related_name='сompetencies')
+    theory = models.CharField(verbose_name='Обучение', max_length=200, null=True, blank=True)
+    theory_exp_date = models.DateField(verbose_name='Срок', blank=True, null=True)
+    theory_done = models.BooleanField(verbose_name='Статус', default=False)
+    practice = models.CharField(verbose_name='Практика', max_length=200, null=True, blank=True)
+    practice_exp_date = models.DateField(verbose_name='Срок', blank=True, null=True)
+    practice_done = models.BooleanField(verbose_name='Статус', default=False)
 
     class Meta:
         verbose_name = 'Компетенция'
@@ -103,26 +109,6 @@ class Сompetence(models.Model):
 
     def __str__(self):
         return f'{self.competence}'
-
-
-# Действия, которые нужно совершить, чтобы развить ружные компетенции, например, пройти обучение, стажировку,
-# принять участие в проекте.
-class Activity_pdp(models.Model):
-    objects = models.manager.Manager()
-    activity = models.CharField(verbose_name='Действие', max_length=200)
-    expected_date = models.DateField(verbose_name='Срок', blank=True, null=True)
-    done = models.BooleanField(verbose_name='Статус', default=False)
-    сompetence = models.ForeignKey(Сompetence, on_delete=models.CASCADE, verbose_name='Компетенция',
-                                   related_name='activities_pdp')
-
-    class Meta:
-        ordering = ('expected_date',)
-        verbose_name = 'Действие по ИПР'
-        verbose_name_plural = 'Действия по ИПР'
-        db_table = 'Действия по ИПР'
-
-    def __str__(self):
-        return f'{self.activity}'
 
 
 # Модель для личной цели: название, подробное описание по технологии SMART, срок и отметка о выполнеии

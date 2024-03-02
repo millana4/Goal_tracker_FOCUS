@@ -1,14 +1,15 @@
 from rest_framework import serializers
-from .models import User
+from .models import User, Pdp, Сompetence
 
 
+# Сериализатор для регистрации пользователя
 class RegistrUserSerializer(serializers.ModelSerializer):
     # Поле для повторения пароля
     password2 = serializers.CharField()
 
     # Настройка полей
     class Meta:
-        # Поля модели которые будем использовать
+        # Модель, которую будем использовать
         model = User
         # Назначаем поля которые будем использовать
         fields = ['email', 'username', 'password', 'password2']
@@ -36,3 +37,23 @@ class RegistrUserSerializer(serializers.ModelSerializer):
         return user
 
 
+# --- РАБОТА С ИПР И КАРЬЕРНЫМИ ЦЕЛЯМИ ---
+# Сериализатор для создания ИПР
+class PdpCreationSerializer(serializers.ModelSerializer):
+    # Это чтобы при создании ИПР автоматически указывать пользователя
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    class Meta:
+        # Модель, которую будем использовать
+        model = Pdp
+        # Назначаем поля которые будем использовать
+        fields = ['pdp_title', 'smart', 'expected_date', 'user']
+
+
+# Сериализатор для создания компетенций к добавления их к ИПР
+class CompetenceCreationSerializer(serializers.ModelSerializer):
+    pdp = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    class Meta:
+        model = Сompetence
+        fields = ['competence', 'current_level', 'pdp', 'theory', 'theory_exp_date', 'practice', 'practice_exp_date']

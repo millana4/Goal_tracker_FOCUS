@@ -1,0 +1,35 @@
+{% extends "base_generic3.html" %}
+
+{% load rest_framework %}
+
+{% block content %}
+
+<h1>Индивидуальный план развития </h1>
+<br><br>
+<form action="{% url 'pdp' %}" method="POST">
+        {% csrf_token %}
+            <table border="1", width="100%">
+               <tr>
+                   <th>Компетенция</th>
+                   <th>Текущий уровень</th>
+                   <th>Что делать</th>
+               </tr>
+                    {% for obj in serializer %}
+                       <tr>
+                           <td width="20%">{{ obj.competence }}</td>
+                           <td width="20%">{{ obj.current_level }}</td>
+                           <td width="60%">{{ obj.theory }}. Срок до {{ obj.theory_exp_date }}<br>
+                               {{ obj.practice }}. Срок до {{ obj.practice_exp_date }}
+                           </td>
+                       </tr>
+                    {% endfor %}
+            </table>
+</form>
+<br><br>
+        <form action="{% url 'pdp_attention' %}" target=>
+            <button>Удалить ИПР</button>
+        </form>
+        </form>
+
+
+{% endblock %}
