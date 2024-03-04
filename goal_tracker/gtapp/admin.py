@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from .models import User, Pdp, Personal_goal, Financial_goal, Idea
+from .models import User, Pdp, Personal_goal, Idea
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 
 # Форма создания пользователя. Прописываем, так как стандартная модель пользователя была изменена.
@@ -50,11 +50,6 @@ class Personal_goalInstanceInline(admin.TabularInline):
     extra = 1
 
 
-class Financial_goalInstanceInline(admin.TabularInline):
-    model = Financial_goal
-    extra = 1
-
-
 class IdeaInstanceInline(admin.StackedInline):
     model = Idea
     extra = 1
@@ -83,7 +78,7 @@ class UserAdmin(BaseUserAdmin):
     ordering = ["email"]              # по какому полю соритровать
 
     # для просмотра связанных с пользователем таблиц
-    inlines = [PdpInstanceInline, Personal_goalInstanceInline, Financial_goalInstanceInline, IdeaInstanceInline]
+    inlines = [PdpInstanceInline, Personal_goalInstanceInline, IdeaInstanceInline]
 
     filter_horizontal = []
 

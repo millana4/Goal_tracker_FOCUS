@@ -51,18 +51,6 @@
         </form>
     {% endif %}
 
-<h2 style="font-size: 20px">Финансовые цели</h2>
-    {% if flag_finance == False %}
-        <p>Вы еще не заполнили финансовые цели.</p>
-        <form action="finance.html" target=>
-            <button>Заполнить</button>
-        </form>
-    {% else %}
-        <form action="finance.html" target=>
-            <button>Посмотреть</button>
-        </form>
-    {% endif %}
-
 <h2 style="font-size: 20px">Идеи на будущее</h2>
     {% if flag_idea == False %}
         <p>Ваш список идей пока пуст.</p>
@@ -74,8 +62,6 @@
             <button>Посмотреть</button>
         </form>
     {% endif %}
-
-
 
 
 {% endblock %}

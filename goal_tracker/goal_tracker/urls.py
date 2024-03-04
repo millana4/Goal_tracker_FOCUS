@@ -21,7 +21,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 
 from gtapp.views import MainPage, RegistrUserView, ProfileView, PdpCreateView, CompetenceCreateView, PdpView, \
-    PdpDeleteView
+    PdpDeleteView, PersonalCreateView, PersonalActivityCreateView, PersonalView, PersonalGoalView
 
 # from gtapp.views import create_pdp
 
@@ -36,6 +36,11 @@ urlpatterns = [
                   path('competence/', CompetenceCreateView.as_view(), name='competence'),
                   path('pdp/', PdpView.as_view(), name='pdp'),
                   path('pdp_attention/', PdpDeleteView.as_view(), name='pdp_attention'),
+                  path('personal_creation/', PersonalCreateView.as_view(), name='personal_creation'),
+                  path('personal_action/', PersonalActivityCreateView.as_view(), name='personal_action'),
+                  path('personal_list/', PersonalView.as_view(), name='personal'),
+                  path('personal_goal/<int:pk>/', PersonalGoalView.as_view(), name='personal_goal'),
+
 
                   path('api-auth', include('rest_framework.urls')),
                   path('auth/', include('djoser.urls')),

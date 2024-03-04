@@ -157,52 +157,6 @@ class Personal_activity(models.Model):
         return f'{self.personal_activity}'
 
 
-# Модель для финансовой цели: название, подробное описание по технологии SMART, срок и отметка о выполнеии.
-class Financial_goal(models.Model):
-    objects = models.manager.Manager()
-    financial_goal_title = models.CharField(verbose_name='Финансовая цель', max_length=300)
-    financial_goal_smart = models.CharField(verbose_name='Финансовая цель по SMART', max_length=700, null=True,
-                                            blank=True)
-    expected_date = models.DateField(verbose_name='Срок', blank=True, null=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь', related_name='financial_goal')
-    created_at = models.DateTimeField(auto_now_add=True)
-    done = models.BooleanField(verbose_name='Статус', default=False)
-
-    class Meta:
-        verbose_name = 'Финансовая цель'
-        verbose_name_plural = 'Финансовые цели'
-        db_table = 'Финансовые цели'
-
-    def __str__(self):
-        return f'{self.financial_goal_title}'
-
-
-# Модель действий, которые необходимо совершить, чтобы достичь финансовой цели.
-class Financial_activity(models.Model):
-    REGULAR_CHOICES = {
-        'regular': 'Регулярное действие',
-        'one time': 'Разовое действие',
-    }
-
-    objects = models.manager.Manager()
-    finance_activity = models.CharField(verbose_name='Действие', max_length=200)
-    regular_one_time = models.CharField(verbose_name='Регулярное / разовое', choices=REGULAR_CHOICES, null=True,
-                                        blank=True)
-    expected_date = models.DateField(verbose_name='Срок', blank=True, null=True)
-    done = models.BooleanField(verbose_name='Статус', default=False)
-    finance_goal = models.ForeignKey(Financial_goal, on_delete=models.CASCADE, verbose_name='Финансвоая цель',
-                                     related_name='financial_activities')
-
-    class Meta:
-        ordering = ('expected_date',)
-        verbose_name = 'Финансовая активность'
-        verbose_name_plural = 'Финансовая активность'
-        db_table = 'Финансовая активность'
-
-    def __str__(self):
-        return f'{self.finance_activity}'
-
-
 # Модель для заметок, в которых можно записывать идеи на долгий срок.
 class Idea(models.Model):
     objects = models.manager.Manager()

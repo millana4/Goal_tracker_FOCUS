@@ -1,25 +1,30 @@
 from django.shortcuts import render
 from django.contrib.auth import login, authenticate
 from django.shortcuts import get_object_or_404, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.core.cache import cache
 
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.generics import CreateAPIView, ListCreateAPIView
+from rest_framework.generics import CreateAPIView, ListCreateAPIView, ListAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.renderers import TemplateHTMLRenderer
 
-from .models import User, Pdp, Personal_goal, Financial_goal, Idea, Сompetence
-from .serializers import RegistrUserSerializer, PdpCreationSerializer, CompetenceCreationSerializer
+from .models import User, Pdp, Personal_goal, Idea, Сompetence
+from .serializers import RegistrUserSerializer, PdpCreationSerializer, CompetenceCreationSerializer, \
+    PersonalCreationSerializer, PersonalActivityCreationSerializer, PersonalSerializer, PersonalGoalSerializer
 
+
+# --- ГЛАВНАЯ ---
 
 # Главная страница с описанием проекта
 class MainPage():
     def home(request):
         return render(request, 'home.html', {})
 
+
+# --- РЕГИСТРАЦИЯ И ВХОД ---
 
 # Регистрация пользователя
 class RegistrUserView(APIView):
@@ -64,16 +69,79 @@ class ProfileView():
         # Получаю информацию о том, заполнены или цели
         flag_pdp = Pdp.objects.filter(user=user_id).exists()
         flag_personal = Personal_goal.objects.filter(user=user_id).exists()
-        flag_finance = Financial_goal.objects.filter(user=user_id).exists()
         flag_idea = Idea.objects.filter(user=user_id).exists()
 
         # Создаю словарь с иформацией, которая передается в шаблон
         context = {'username': user.username, 'flag_pdp': flag_pdp, 'flag_personal': flag_personal,
-                   'flag_finance': flag_finance, 'flag_idea': flag_idea, }
+                   'flag_idea': flag_idea}
         return render(request, 'profile/profile.html', context)
 
 
+# --- РАБОТА С ЛИЧНЫМИ ЦЕЛЯМИ ---
+
+# Представление для создания личных целей
+class PersonalCreateView(APIView):
+    def get(self, request):
+        # Закрываю страницу для неавторизованных пользователей
+        if not request.user.is_authenticated:
+            return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=403)
+        serializer = PersonalCreationSerializer()
+        return Response(serializer.data)
+
+    def post(self, request):
+        # Закрываю страницу для неавторизованных пользователей
+        if not request.user.is_authenticated:
+            return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=403)
+        # Получаю данные пользователя из сериалайзера
+        serializer = PersonalCreationSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.data)
+        # Сохраняю цели
+        serializer.save(user=self.request.user)
+        return JsonResponse({'Status': True})
+
+
+# Представление для того, чтобы добавлять действия к личным целям
+class PersonalActivityCreateView(CreateAPIView):
+    def get(self, request):
+        # Закрываю страницу для неавторизованных пользователей
+        if not request.user.is_authenticated:
+            return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=403)
+        serializer = PersonalActivityCreationSerializer()
+        return Response(serializer.data)
+
+    def post(self, request):
+        # Закрываю страницу для неавторизованных пользователей
+        if not request.user.is_authenticated:
+            return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=403)
+        # Получаю данные пользователя из сериалайзера
+        serializer = PersonalActivityCreationSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response({'serializer': serializer})
+        # Сохраняю действие
+        serializer.save()
+        return JsonResponse({'Status': True})
+
+
+# Представление для просмотра списка личных целей пользователя
+class PersonalView(APIView):
+    def get(self, request, username=None):
+        # Закрываю страницу для неавторизованных пользователей
+        if not request.user.is_authenticated:
+            return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=403)
+        queryset = Personal_goal.objects.filter(user=request.user.id)
+        serializer = PersonalSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+
+# Представление для просмотра, редактирования и удаления личной цели
+class PersonalGoalView(RetrieveUpdateDestroyAPIView):
+    queryset = Personal_goal.objects.all()
+    serializer_class = PersonalGoalSerializer
+
+
 # --- РАБОТА С ИПР И КАРЬЕРНЫМИ ЦЕЛЯМИ ---
+
 # Представление для создания ИПР
 class PdpCreateView(APIView):
     renderer_classes = [TemplateHTMLRenderer]

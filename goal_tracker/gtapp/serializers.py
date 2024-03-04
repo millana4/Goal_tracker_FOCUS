@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Pdp, Сompetence
+from .models import User, Pdp, Сompetence, Personal_goal, Personal_activity
 
 
 # Сериализатор для регистрации пользователя
@@ -37,7 +37,49 @@ class RegistrUserSerializer(serializers.ModelSerializer):
         return user
 
 
+# --- РАБОТА С ЛИЧНЫМИ ЦЕЛЯМИ ---
+
+# Сериализатор для создания личных целей
+class PersonalCreationSerializer(serializers.ModelSerializer):
+    # Это чтобы при создании автоматически указывать пользователя
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    class Meta:
+        # Модель, которую будем использовать
+        model = Personal_goal
+        # Назначаем поля которые будем использовать
+        fields = ['personal_goal_title', 'personal_goal_smart', 'expected_date', 'user']
+
+# Сериализатор для создания действий, привязанных к личныя целям
+class PersonalActivityCreationSerializer(serializers.ModelSerializer):
+    class Meta:
+        # Модель, которую будем использовать
+        model = Personal_activity
+        # Назначаем поля которые будем использовать
+        fields = ['personal_activity', 'regular_one_time', 'expected_date', 'personal_goal']
+
+
+# Сериализатор для просмотра списка личных целей
+class PersonalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Personal_goal
+        fields = ('id', 'personal_goal_title', 'personal_goal_smart', 'expected_date', 'done',)
+        # Идентификатор id нужен, чтобы потом можно было перейти из списка целей к просмотру одной цели по ее id.
+        read_only_fields = ('id',)
+
+
+# Сериализатор для просмотра и редактирования личной цели
+class PersonalGoalSerializer(serializers.ModelSerializer):
+    class Meta:
+        # Модель, которую будем использовать
+        model = Personal_goal
+        # Назначаем поля которые будем использовать
+        fields = ('id', 'personal_goal_title', 'personal_goal_smart', 'expected_date', 'done', 'personal_activities',)
+        read_only_fields = ('id',)
+
+
 # --- РАБОТА С ИПР И КАРЬЕРНЫМИ ЦЕЛЯМИ ---
+
 # Сериализатор для создания ИПР
 class PdpCreationSerializer(serializers.ModelSerializer):
     # Это чтобы при создании ИПР автоматически указывать пользователя

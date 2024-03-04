@@ -1,0 +1,68 @@
+GET http://127.0.0.1:8000/personal_creation/
+Content-Type: application/json
+Authorization: Token d7ff6893f982497f8bca430dda1fc825a468aca5
+
+###
+
+POST http://127.0.0.1:8000/personal_creation/
+Content-Type: application/json
+Authorization: Token d7ff6893f982497f8bca430dda1fc825a468aca5
+
+{
+    "personal_goal_title": "Начать бегать",
+    "personal_goal_smart": "Бегать 2 раза в неделю по 30 мин в течение 3 месяцев",
+    "expected_date": "2024-03-21"
+}
+
+###
+
+POST http://127.0.0.1:8000/personal_action/
+Content-Type: application/json
+Authorization: Token d7ff6893f982497f8bca430dda1fc825a468aca5
+
+{
+    "personal_activity": "Бегать 2 раза в неделю",
+    "regular_one_time": "regular",
+    "expected_date": "2024-03-21",
+    "personal_goal": "7"
+}
+
+###
+
+GET http://127.0.0.1:8000/personal_list/
+Content-Type: application/json
+Authorization: Token d7ff6893f982497f8bca430dda1fc825a468aca5
+
+###
+
+GET http://127.0.0.1:8000/personal_goal/7/
+Content-Type: application/json
+Authorization: Token d7ff6893f982497f8bca430dda1fc825a468aca5
+
+###
+
+PUT  http://127.0.0.1:8000/personal_goal/6/
+Content-Type: application/json
+Authorization: Token d7ff6893f982497f8bca430dda1fc825a468aca5
+
+{
+  "id": 6,
+  "personal_goal_title": "оооооооооо",
+  "personal_goal_smart": "eeeeeeeeeeeeeeeeeeee",
+  "expected_date": "2024-03-19",
+  "done": false
+}
+
+###
+
+DELETE   http://127.0.0.1:8000/personal_goal/6/
+Content-Type: application/json
+Authorization: Token d7ff6893f982497f8bca430dda1fc825a468aca5
+
+{
+  "id": 6,
+  "personal_goal_title": "оооооооооо",
+  "personal_goal_smart": "eeeeeeeeeeeeeeeeeeee",
+  "expected_date": "2024-03-19",
+  "done": false
+}
