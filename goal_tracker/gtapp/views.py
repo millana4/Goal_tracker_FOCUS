@@ -13,7 +13,8 @@ from rest_framework.renderers import TemplateHTMLRenderer
 
 from .models import User, Pdp, Personal_goal, Idea, Сompetence
 from .serializers import RegistrUserSerializer, PdpCreationSerializer, CompetenceCreationSerializer, \
-    PersonalCreationSerializer, PersonalActivityCreationSerializer, PersonalSerializer, PersonalGoalSerializer
+    PersonalCreationSerializer, PersonalActivityCreationSerializer, PersonalSerializer, PersonalGoalSerializer, \
+    IdeaSerializer
 
 
 # --- ГЛАВНАЯ ---
@@ -225,3 +226,39 @@ class PdpDeleteView(APIView):
         # Удаляю последний ИПР пользователя
         Pdp.objects.filter(user=request.user.id).last().delete()
         return redirect('profile')
+
+
+# --- РАБОТА С ЗАМЕТКАМИ (ИДЕИ НА БУДУЩЕЕ) ---
+
+# Представление для создания заметок
+class IdeaCreateView(APIView):
+    def get(self, request):
+        # Закрываю страницу для неавторизованных пользователей
+        if not request.user.is_authenticated:
+            return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=403)
+        serializer = IdeaSerializer()
+        return Response(serializer.data)
+
+    def post(self, request):
+        # Закрываю страницу для неавторизованных пользователей
+        if not request.user.is_authenticated:
+            return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=403)
+        # Получаю данные пользователя из сериалайзера
+        serializer = IdeaSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.data)
+        # Сохраняю
+        serializer.save(user=self.request.user)
+        return JsonResponse({'Status': True})
+
+# Представление для просмотра списка идей пользователя
+class IdeaListView(ListAPIView):
+    serializer_class = IdeaSerializer
+
+    def get_queryset(self):
+        return Idea.objects.filter(user=self.request.user)
+
+# Представление для просмотра, редактирования и удаления заметки
+class IdeaView(RetrieveUpdateDestroyAPIView):
+    queryset = Idea.objects.all()
+    serializer_class = IdeaSerializer

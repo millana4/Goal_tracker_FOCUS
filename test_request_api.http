@@ -66,3 +66,20 @@ Authorization: Token d7ff6893f982497f8bca430dda1fc825a468aca5
   "expected_date": "2024-03-19",
   "done": false
 }
+
+###
+GET http://127.0.0.1:8000/idea_creation/
+Content-Type: application/json
+Authorization: Token 395a62e71219d8a7c5f87c47c9068077b7923122
+
+###
+POST http://127.0.0.1:8000/personal_creation/
+Content-Type: application/json
+Authorization: Token 395a62e71219d8a7c5f87c47c9068077b7923122
+
+{
+  "idea_title": " идея",
+  "description": "Много ходить кругами вокруг да около."
+}
+
+###

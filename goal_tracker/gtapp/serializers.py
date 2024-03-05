@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Pdp, Сompetence, Personal_goal, Personal_activity
+from .models import User, Pdp, Сompetence, Personal_goal, Personal_activity, Idea
 
 
 # Сериализатор для регистрации пользователя
@@ -99,3 +99,18 @@ class CompetenceCreationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Сompetence
         fields = ['competence', 'current_level', 'pdp', 'theory', 'theory_exp_date', 'practice', 'practice_exp_date']
+
+
+# --- РАБОТА С ЗАМЕТКАМИ (ИДЕИ НА БУДУЩЕЕ) ---
+
+# Сериализатор для заметок
+class IdeaSerializer(serializers.ModelSerializer):
+    # Это чтобы при создании автоматически указывать пользователя
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    class Meta:
+        # Модель, которую будем использовать
+        model = Idea
+        # Назначаем поля которые будем использовать
+        fields = ['idea_title', 'description', 'user']
+
