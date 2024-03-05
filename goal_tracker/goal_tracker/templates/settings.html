@@ -1,0 +1,33 @@
+{% extends "base_generic3.html" %}
+
+{% load rest_framework %}
+
+{% block content %}
+
+<h1>Настройка уведомлений</h1>
+
+{% if flag_notifications == True %}
+    <p>
+        При регистрации вы указали email. Если вы записали свои цели и поставили сроки, то на указанный email будете
+        получать напоминания.<br>
+        Вы можете отключить уведомления и отслеживать сроки самостоятельно. <br>
+        Сейчас у вас включено получение уведомлений.
+    </p>
+    <form action="{% url 'settings' %}" method="POST">
+        {% csrf_token %}
+        <input type="submit" value="Отключить уведомления">
+    </form>
+
+{% else %}
+    <p>
+        Уведомления на email отключены. <br>
+        Если хотите получать сообщения в почту о приближающихся сроках по вашия целям, включите уведомления.
+    </p>
+    <form action="{% url 'settings' %}" method="POST">
+        {% csrf_token %}
+        <input type="submit" value="Включить">
+    </form>
+
+{% endif %}
+
+{% endblock %}

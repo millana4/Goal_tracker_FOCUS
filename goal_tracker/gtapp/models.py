@@ -40,6 +40,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(verbose_name='email', max_length=254, unique=True)
     username = models.CharField(verbose_name='Имя', max_length=50, default='Пользователь')
     created_at = models.DateTimeField(auto_now_add=True)
+    email_settings = models.BooleanField(verbose_name='Настройка уведомлений', default=True)
     is_admin = models.BooleanField(verbose_name='Админ', default=False)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)

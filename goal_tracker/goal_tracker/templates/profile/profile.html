@@ -42,11 +42,11 @@
 <h2 style="font-size: 20px">Личные цели</h2>
     {% if flag_personal == False %}
         <p>Здесь пока ничего нет, поэтому заполните, пожалуйста, форму.</p>
-        <form action="personal.html" target=>
+        <form action="{% url 'personal_creation' %}" method="GET">
             <button>Заполнить</button>
         </form>
     {% else %}
-        <form action="personal.html" target=>
+        <form action="{% url 'personal' %}" target=>
             <button>Посмотреть</button>
         </form>
     {% endif %}
@@ -54,11 +54,11 @@
 <h2 style="font-size: 20px">Идеи на будущее</h2>
     {% if flag_idea == False %}
         <p>Ваш список идей пока пуст.</p>
-        <form action="idea.html" target=>
+        <form action="{% url 'idea_creation' %}" method="GET">
             <button>Заполнить</button>
         </form>
     {% else %}
-        <form action="idea.html" target=>
+        <form action="{% url 'idea_list' %}" target=>
             <button>Посмотреть</button>
         </form>
     {% endif %}

@@ -262,3 +262,48 @@ class IdeaListView(ListAPIView):
 class IdeaView(RetrieveUpdateDestroyAPIView):
     queryset = Idea.objects.all()
     serializer_class = IdeaSerializer
+
+
+# --- НАСТРОЙКА УВЕДОМЛЕНИЙ НА EMAIL ---
+class SettingsView(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'settings.html'
+
+    def get(self, request):
+        # Закрываю страницу для неавторизованных пользователей
+        if not request.user.is_authenticated:
+            return HttpResponse(content='Вы не авторизованы. Войдите в систему.', status=403)
+
+        # Получаю id авторизованного пользователя
+        user_id = request.user.id
+        user = User.objects.get(pk=user_id)
+
+        # Получаю информацию о том, включены ли уведомления на email в профиле пользователя
+        flag_notifications = user.email_settings
+
+        # Создаю словарь с иформацией, которая передается в шаблон
+        context = {'username': user.username, 'email': user.email, 'flag_notifications': flag_notifications}
+        return render(request, 'settings.html', context)
+
+    def post(self, request):
+        # Закрываю страницу для неавторизованных пользователей
+        if not request.user.is_authenticated:
+            return HttpResponse(content='Вы не авторизованы. Войдите в систему.', status=403)
+
+        # Получаю id авторизованного пользователя
+        user_id = request.user.id
+        user = User.objects.get(pk=user_id)
+
+        # Получаю информацию о том, включены ли уведомления на email в профиле пользователя
+        flag_notifications = user.email_settings
+
+        # Если включены, то выключаю. Если выключены — включаю.
+        if flag_notifications:
+            user.email_settings = False
+            user.save()
+        else:
+            user.email_settings = True
+            user.save()
+
+        # Направляю пользователя в профиль
+        return redirect('profile')

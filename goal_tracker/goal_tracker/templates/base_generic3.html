@@ -27,7 +27,8 @@
            {% if user.is_authenticated %}
              <li>{{ user.get_username }}</li>
              <li><a href="{% url 'logout'%}?next={{request.path}}">Выйти</a></li>
-             <li><a href="{% url 'profile' %}">В личный кабинет</a></li>
+             <li><a href="{% url 'settings'%}?next={{request.path}}">Настройки</a></li>
+             <li><a href="{% url 'profile' %}">Личный кабинет</a></li>
            {% else %}
              <li><a href="{% url 'login'%}?next={{request.path}}">Войти</a></li>
            {% endif %}

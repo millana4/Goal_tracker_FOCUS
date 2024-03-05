@@ -22,7 +22,7 @@ from django.conf import settings
 
 from gtapp.views import MainPage, RegistrUserView, ProfileView, PdpCreateView, CompetenceCreateView, PdpView, \
     PdpDeleteView, PersonalCreateView, PersonalActivityCreateView, PersonalView, PersonalGoalView, IdeaCreateView, \
-    IdeaListView, IdeaView
+    IdeaListView, IdeaView, SettingsView
 
 # from gtapp.views import create_pdp
 
@@ -42,10 +42,10 @@ urlpatterns = [
                   path('personal_list/', PersonalView.as_view(), name='personal'),
                   path('personal_goal/<int:pk>/', PersonalGoalView.as_view(), name='personal_goal'),
                   path('idea_creation/', IdeaCreateView.as_view(), name='idea_creation'),
-                  path('idea_list/', IdeaListView.as_view(), name='idea_creation'),
+                  path('idea_list/', IdeaListView.as_view(), name='idea_list'),
                   path('idea/<int:pk>/', IdeaView.as_view(), name='idea'),
 
-
+                  path('settings/', SettingsView.as_view(), name='settings'),
 
                   path('api-auth', include('rest_framework.urls')),
                   path('auth/', include('djoser.urls')),

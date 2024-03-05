@@ -25,8 +25,9 @@
           <br>
           <ul class="sidebar-nav">
            {% if user.is_authenticated %}
-             <li>{{ user.get_username }}</li>
-             <li><a href="{% url 'logout'%}?next={{request.path}}">Выйти</a></li>
+              <li>{{ user.get_username }}</li>
+              <li><a href="{% url 'logout'%}?next={{request.path}}">Выйти</a></li>
+              <li><a href="{% url 'settings'%}?next={{request.path}}">Настройки</a></li>
            {% else %}
              <li><a href="{% url 'login'%}?next={{request.path}}">Войти</a></li>
            {% endif %}
