@@ -48,7 +48,7 @@ class PersonalCreationSerializer(serializers.ModelSerializer):
         # Модель, которую будем использовать
         model = Personal_goal
         # Назначаем поля которые будем использовать
-        fields = ['personal_goal_title', 'personal_goal_smart', 'expected_date', 'user']
+        fields = ['personal_goal_title', 'personal_goal_smart', 'expected_date_goal', 'user']
 
 # Сериализатор для создания действий, привязанных к личныя целям
 class PersonalActivityCreationSerializer(serializers.ModelSerializer):
@@ -63,7 +63,7 @@ class PersonalActivityCreationSerializer(serializers.ModelSerializer):
 class PersonalSerializer(serializers.ModelSerializer):
     class Meta:
         model = Personal_goal
-        fields = ('id', 'personal_goal_title', 'personal_goal_smart', 'expected_date', 'done',)
+        fields = ('id', 'personal_goal_title', 'personal_goal_smart', 'expected_date_goal', 'done_goal',)
         # Идентификатор id нужен, чтобы потом можно было перейти из списка целей к просмотру одной цели по ее id.
         read_only_fields = ('id',)
 
@@ -74,7 +74,7 @@ class PersonalGoalSerializer(serializers.ModelSerializer):
         # Модель, которую будем использовать
         model = Personal_goal
         # Назначаем поля которые будем использовать
-        fields = ('id', 'personal_goal_title', 'personal_goal_smart', 'expected_date', 'done', 'personal_activities',)
+        fields = ('id', 'personal_goal_title', 'personal_goal_smart', 'expected_date_goal', 'done_goal', 'personal_activities',)
         read_only_fields = ('id',)
 
 

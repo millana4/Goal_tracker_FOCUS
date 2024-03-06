@@ -6,7 +6,7 @@ Authorization: Token d7ff6893f982497f8bca430dda1fc825a468aca5
 
 POST http://127.0.0.1:8000/personal_creation/
 Content-Type: application/json
-Authorization: Token d7ff6893f982497f8bca430dda1fc825a468aca5
+Authorization: Token c4cf58999c9603977f12046c9ab0020cc2e490fa
 
 {
     "personal_goal_title": "Начать бегать",
@@ -18,7 +18,7 @@ Authorization: Token d7ff6893f982497f8bca430dda1fc825a468aca5
 
 POST http://127.0.0.1:8000/personal_action/
 Content-Type: application/json
-Authorization: Token d7ff6893f982497f8bca430dda1fc825a468aca5
+Authorization: c4cf58999c9603977f12046c9ab0020cc2e490fa
 
 {
     "personal_activity": "Бегать 2 раза в неделю",

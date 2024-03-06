@@ -11,10 +11,12 @@ from rest_framework.generics import CreateAPIView, ListCreateAPIView, ListAPIVie
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.renderers import TemplateHTMLRenderer
 
-from .models import User, Pdp, Personal_goal, Idea, Сompetence
+from .models import User, Pdp, Personal_goal, Personal_activity, Idea, Сompetence
 from .serializers import RegistrUserSerializer, PdpCreationSerializer, CompetenceCreationSerializer, \
     PersonalCreationSerializer, PersonalActivityCreationSerializer, PersonalSerializer, PersonalGoalSerializer, \
     IdeaSerializer
+
+import xlwt
 
 
 # --- ГЛАВНАЯ ---
@@ -103,7 +105,7 @@ class PersonalCreateView(APIView):
 
 
 # Представление для того, чтобы добавлять действия к личным целям
-class PersonalActivityCreateView(CreateAPIView):
+class PersonalActivityCreateView(APIView):
     def get(self, request):
         # Закрываю страницу для неавторизованных пользователей
         if not request.user.is_authenticated:
@@ -265,6 +267,8 @@ class IdeaView(RetrieveUpdateDestroyAPIView):
 
 
 # --- НАСТРОЙКА УВЕДОМЛЕНИЙ НА EMAIL ---
+# В этом представлении пользователь может указать, хочет ли он получать уведомления на почту или будет ходить на сайт и
+# отслеживать все события вручную.
 class SettingsView(APIView):
     renderer_classes = [TemplateHTMLRenderer]
     template_name = 'settings.html'
@@ -307,3 +311,108 @@ class SettingsView(APIView):
 
         # Направляю пользователя в профиль
         return redirect('profile')
+
+
+# --- ВЫГРУЗКА ДАННЫХ ---
+# Выгружает все данные пользователя в Excel-файл — карьерные цели, личные цели и заметки с идеями.
+class DownloadView():
+    def excel_create(request):
+        # Закрываю страницу для неавторизованных пользователей
+        if not request.user.is_authenticated:
+            return HttpResponse(content='Вы не авторизованы. Войдите в систему.', status=403)
+
+        # Создаю файл с ответом
+        response = HttpResponse(content_type='application/ms-excel')
+        response['Content-Disposition'] = 'attachment; filename="goal_tracker.xls"'
+        wb = xlwt.Workbook(encoding='utf-8')
+
+        # Создаю таблицу ИПР
+        if Pdp.objects.filter(user=request.user.id).exists():
+            ws = wb.add_sheet('Personal Development Plan')
+
+            # В первую строчку записываю название ИПР
+            row_num = 0
+            font_style = xlwt.XFStyle()
+            font_style.font.bold = True
+            pdp_column = Pdp.objects.filter(user=request.user.id).last().pdp_title
+            ws.write(row_num, 0, pdp_column, font_style)
+
+            # Во вторую строку записываю шапку
+            row_num = 1
+            font_style = xlwt.XFStyle()
+            font_style.font.bold = True
+            columns = ['Компетенция', 'Уровень', 'Обучение', 'Срок обучения', 'Статус обучения', 'Практика',
+                       'Срок практики', 'Статус практики']
+            for col_num in range(len(columns)):
+                ws.write(row_num, col_num, columns[col_num], font_style)
+
+            # Заполняю таблицу ИПР
+            font_style = xlwt.XFStyle()
+            rows = Сompetence.objects.filter(pdp=Pdp.objects.filter(user=request.user.id).last()).values_list\
+                ('competence', 'current_level', 'theory', 'theory_exp_date', 'theory_done', 'practice',
+                 'practice_exp_date', 'practice_done')
+            for row in rows:
+                row_num += 1
+                for col_num in range(len(row)):
+                    ws.write(row_num, col_num, row[col_num], font_style)
+
+        # Создаю таблицу с личными целями
+        if Personal_goal.objects.filter(user=request.user.id).exists():
+            ws = wb.add_sheet('Personal Goals')
+
+            # В первую строчку записываю шапку
+            row_num = 0
+            font_style = xlwt.XFStyle()
+            font_style.font.bold = True
+            columns = ['Цель', 'Цель по SMART', 'Срок по цели', 'Статус цели', 'Действие', 'Характер', 'Срок для действия',
+                       'Статус действия']
+            for col_num in range(len(columns)):
+                ws.write(row_num, col_num, columns[col_num], font_style)
+
+            # Заполняю таблицу с личными целями из двух связанных таблиц — Личные цели и Действия.
+            font_style = xlwt.XFStyle()
+            rows = Personal_goal.objects.filter(user=request.user.id).prefetch_related(
+                'personal_activities__personal_activity',
+                'personal_activities__regular_one_time',
+                'personal_activities__expected_date',
+                'personal_activities__done'
+            ).values_list(
+                'personal_goal_title',
+                'personal_goal_smart',
+                'expected_date_goal',
+                'done_goal',
+                'personal_activities__personal_activity',
+                'personal_activities__regular_one_time',
+                'personal_activities__expected_date',
+                'personal_activities__done'
+            )
+            for row in rows:
+                row_num += 1
+                for col_num in range(len(row)):
+                    ws.write(row_num, col_num, row[col_num], font_style)
+
+        # Создаю таблицу для заметок с идеями
+        if Idea.objects.filter(user=request.user.id).exists():
+            ws = wb.add_sheet('Ideas')
+
+            # В первую строчку записываю  шапку
+            row_num = 0
+            font_style = xlwt.XFStyle()
+            font_style.font.bold = True
+            columns = ['Заголовок', 'Описание']
+            for col_num in range(len(columns)):
+                ws.write(row_num, col_num, columns[col_num], font_style)
+
+            # Заполняю таблицу
+            font_style = xlwt.XFStyle()
+            rows = Idea.objects.filter(user=request.user.id).values_list('idea_title', 'description')
+            for row in rows:
+                row_num += 1
+                for col_num in range(len(row)):
+                    ws.write(row_num, col_num, row[col_num], font_style)
+
+        wb.save(response)
+        return response
+
+
+

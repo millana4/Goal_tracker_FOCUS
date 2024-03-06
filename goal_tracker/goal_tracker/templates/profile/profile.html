@@ -16,12 +16,16 @@
         <p>Здесть вы можете добавлять цели, просматривать и редактировать их.</p>
     </td>
     <td>
+        <form action="progress.html" target=>
+                    <button>Отметить прогресс</button>
+        </form>
+        <br>
         <form action="achievements.html" target=>
                     <button>Посмотреть достижения</button>
         </form>
-        <br><br>
-        <form action="progress.html" target=>
-                    <button>Отметить прогресс</button>
+        <br>
+        <form action="{% url 'download' %}" method="GET">
+                    <button>Выгрузить данные</button>
         </form>
     </td>
   </tr>

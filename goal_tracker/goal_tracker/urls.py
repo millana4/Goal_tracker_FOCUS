@@ -22,7 +22,7 @@ from django.conf import settings
 
 from gtapp.views import MainPage, RegistrUserView, ProfileView, PdpCreateView, CompetenceCreateView, PdpView, \
     PdpDeleteView, PersonalCreateView, PersonalActivityCreateView, PersonalView, PersonalGoalView, IdeaCreateView, \
-    IdeaListView, IdeaView, SettingsView
+    IdeaListView, IdeaView, SettingsView, DownloadView
 
 # from gtapp.views import create_pdp
 
@@ -46,6 +46,7 @@ urlpatterns = [
                   path('idea/<int:pk>/', IdeaView.as_view(), name='idea'),
 
                   path('settings/', SettingsView.as_view(), name='settings'),
+                  path('download/', DownloadView.excel_create, name='download'),
 
                   path('api-auth', include('rest_framework.urls')),
                   path('auth/', include('djoser.urls')),

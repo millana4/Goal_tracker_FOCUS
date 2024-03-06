@@ -117,10 +117,10 @@ class Personal_goal(models.Model):
     objects = models.manager.Manager()
     personal_goal_title = models.CharField(verbose_name='Личная цель', max_length=300)
     personal_goal_smart = models.CharField(verbose_name='Личная цель по SMART', max_length=700, null=True, blank=True)
-    expected_date = models.DateField(verbose_name='Срок', blank=True, null=True)
+    expected_date_goal = models.DateField(verbose_name='Срок', blank=True, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь', related_name='personal_goal')
     created_at = models.DateTimeField(auto_now_add=True)
-    done = models.BooleanField(verbose_name='Статус', default=False)
+    done_goal = models.BooleanField(verbose_name='Статус', default=False)
 
     class Meta:
         verbose_name = 'Личная цель'
