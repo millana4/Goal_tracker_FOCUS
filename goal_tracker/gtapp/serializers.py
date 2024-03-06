@@ -56,7 +56,7 @@ class PersonalActivityCreationSerializer(serializers.ModelSerializer):
         # Модель, которую будем использовать
         model = Personal_activity
         # Назначаем поля которые будем использовать
-        fields = ['personal_activity', 'regular_one_time', 'expected_date', 'personal_goal']
+        fields = ['personal_activity', 'regular_one_time', 'expected_date', 'done', 'personal_goal']
 
 
 # Сериализатор для просмотра списка личных целей
@@ -89,7 +89,7 @@ class PdpCreationSerializer(serializers.ModelSerializer):
         # Модель, которую будем использовать
         model = Pdp
         # Назначаем поля которые будем использовать
-        fields = ['pdp_title', 'smart', 'expected_date', 'user']
+        fields = ['pdp_title', 'smart', 'expected_date', 'done', 'user']
 
 
 # Сериализатор для создания компетенций к добавления их к ИПР
@@ -98,7 +98,8 @@ class CompetenceCreationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Сompetence
-        fields = ['competence', 'current_level', 'pdp', 'theory', 'theory_exp_date', 'practice', 'practice_exp_date']
+        fields = ['competence', 'current_level', 'pdp', 'theory', 'theory_exp_date', 'theory_done', 'practice',
+                  'practice_exp_date', 'practice_done']
 
 
 # --- РАБОТА С ЗАМЕТКАМИ (ИДЕИ НА БУДУЩЕЕ) ---

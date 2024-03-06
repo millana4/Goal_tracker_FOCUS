@@ -23,9 +23,8 @@ from django.conf import settings
 from gtapp.views import MainPage, RegistrUserView, ProfileView, PdpCreateView, CompetenceCreateView, PdpView, \
     PdpDeleteView, PersonalCreateView, PersonalActivityCreateView, PersonalView, PersonalGoalView, IdeaCreateView, \
     IdeaListView, IdeaView, SettingsView, DownloadView, CheckProgressView, CompetenceUpdateView, PdpUpdateView, \
-    PersonalActivityUpdateView
+    PersonalActivityUpdateView, AchievementView
 
-# from gtapp.views import create_pdp
 
 urlpatterns = [
                   path('admin/', admin.site.urls),
@@ -52,9 +51,9 @@ urlpatterns = [
                   path('settings/', SettingsView.as_view(), name='settings'),
                   path('download/', DownloadView.excel_create, name='download'),
                   path('check_progress/', CheckProgressView.as_view(), name='check_progress'),
+                  path('achievements/', AchievementView.as_view(), name='achievements'),
 
                   path('api-auth', include('rest_framework.urls')),
                   path('auth/', include('djoser.urls')),
               ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
-# path('new_pdp/', create_pdp),          # функция для наполнения базы

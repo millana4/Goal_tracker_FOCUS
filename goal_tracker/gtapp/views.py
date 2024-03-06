@@ -18,7 +18,7 @@ from .serializers import RegistrUserSerializer, PdpCreationSerializer, Competenc
     IdeaSerializer
 
 import xlwt
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 # --- ГЛАВНАЯ ---
@@ -465,12 +465,12 @@ class CheckProgressView(APIView):
             competencies = Сompetence.objects.filter(pdp=pdp.id, theory_done=False)
             for compet in competencies:
                 if compet.theory_exp_date is not None and compet.theory_exp_date <= datetime.now().date():
-                    context['theory'].append([compet.id, compet.competence, compet.theory_exp_date])
+                    context['theory'].append([compet.id, compet.theory, compet.theory_exp_date])
             # Выбираю компетенциии c практиками, которые должны быть выполнены
             competencies = Сompetence.objects.filter(pdp=pdp.id, practice_done=False)
             for compet in competencies:
                 if compet.practice_exp_date is not None and compet.practice_exp_date <= datetime.now().date():
-                    context['practice'].append([compet.id, compet.competence, compet.practice_exp_date])
+                    context['practice'].append([compet.id, compet.practice, compet.practice_exp_date])
             # Выбираю сами карьерные цели, которые должны быть реализованы на дату запроса
             if pdp.expected_date is not None and pdp.expected_date <= datetime.now().date():
                 context['pdp'].append([pdp.id, pdp.pdp_title, pdp.expected_date])
@@ -490,4 +490,96 @@ class CheckProgressView(APIView):
                 context['goal'].append([goal.id, goal.personal_goal_title, goal.expected_date_goal])
 
         return render(request, 'check_progress.html', context)
+
+
+# --- ОТСЛЕЖИВАНИЕ ПРОГРЕССА ---
+# В предатавлении пользователь может посмотреть свои достижения за последние три месяца и за все время. Поиск идет
+# по моделям ИПР и личным целям и связанным с ними. Выводятся все объекты со татусом «Сделано».
+
+class AchievementView(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'achievements.html'
+
+    # Получаю события, о которых надо опросить пользователя — дата прошла, но события не отмечены как выполненные.
+    def get(self, request):
+        # Закрываю страницу для неавторизованных пользователей
+        if not request.user.is_authenticated:
+            return HttpResponse(content='Вы не авторизованы. Войдите в систему.', status=403)
+
+        # Создаю словарь с данными, который потом передам в шаблон
+        context = {}
+        context['theory_3'] = []
+        context['practice_3'] = []
+        context['pdp_3'] = []
+        context['act_3'] = []
+        context['goal_3'] = []
+        context['theory_all'] = []
+        context['practice_all'] = []
+        context['pdp_all'] = []
+        context['act_all'] = []
+        context['goal_all'] = []
+
+        # Получаю информацию о компетенциях
+        # Сначала получаю ИПР пользователя, чтобы потом по id ИПР найти компетенции
+        pdps = Pdp.objects.filter(user=request.user.id)
+
+        for pdp in pdps:
+
+            # Выбираю в компетенциях обучения, которые пройдены
+            competencies = Сompetence.objects.filter(pdp=pdp.id, theory_done=True)
+            for compet in competencies:
+                # Выбираю обучения, у которых дата попадает в период с текущей даты до 3 месяцев назад
+                if compet.theory_exp_date is not None and compet.theory_exp_date <= datetime.now().date() and \
+                        compet.theory_exp_date >= datetime.now().date() - timedelta(days=91):
+                    context['theory_3'].append([compet.id, compet.theory, compet.theory_exp_date])
+                # Выбираю обучения, у которых дата прошла более 3 месяцев назад
+                if compet.theory_exp_date is not None and compet.theory_exp_date <= datetime.now().date() - timedelta(days=91):
+                    context['theory_all'].append([compet.id, compet.theory, compet.theory_exp_date])
+
+            # Выбираю компетенциии c практиками, которые пройдены
+            competencies = Сompetence.objects.filter(pdp=pdp.id, practice_done=True)
+            for compet in competencies:
+                # Выбираю практики, у которых дата попадает в период с текущей даты до 3 месяцев назад
+                if compet.practice_exp_date is not None and compet.practice_exp_date <= datetime.now().date() and \
+                        compet.practice_exp_date >= datetime.now().date() - timedelta(days=91):
+                    context['practice_3'].append([compet.id, compet.practice, compet.practice_exp_date])
+                # Выбираю практики, у которых дата прошла более 3 месяцев назад
+                if compet.practice_exp_date is not None and compet.practice_exp_date <= datetime.now().date() - timedelta(days=91):
+                    context['practice_all'].append([compet.id, compet.practice, compet.practice_exp_date])
+
+            # Выбираю сами карьерные цели, которые реализованы за последние 3 месяца
+            if pdp.expected_date is not None and pdp.expected_date <= datetime.now().date() and \
+                        pdp.expected_date >= datetime.now().date() - timedelta(days=91):
+                context['pdp_3'].append([pdp.id, pdp.pdp_title, pdp.expected_date])
+            # И цели, которые реализованы более 3 месяцев назад
+            if pdp.expected_date is not None and pdp.expected_date <= datetime.now().date() - timedelta(days=91):
+                context['pdp_all'].append([pdp.id, pdp.pdp_title, pdp.expected_date])
+
+
+        # Получаю информацию о выполненных личных целях и активностях по ним
+        # Сначала получаю цели пользователя, чтобы потом по id найти действия
+        goals = Personal_goal.objects.filter(user=request.user.id)
+
+        for goal in goals:
+            # Выбираю связанные с целями действия, которые должны быть сделаны
+            acts = Personal_activity.objects.filter(personal_goal=goal.id, regular_one_time='one time', done=True)
+            for act in acts:
+                # Действия за последние 3 месяца
+                if act.expected_date is not None and act.expected_date <= datetime.now().date() and \
+                        act.expected_date >= datetime.now().date() - timedelta(days=91):
+                    context['act_3'].append([act.id, act.personal_activity, act.expected_date])
+                # Действия старше 3 месяцев
+                if act.expected_date is not None and act.expected_date <= datetime.now().date() - timedelta(days=91):
+                    context['act_all'].append([act.id, act.personal_activity, act.expected_date])
+
+
+            # Выбираю сами цели, которые реализованы за последние 3 месяца
+            if goal.expected_date_goal is not None and goal.expected_date_goal <= datetime.now().date() and \
+                        goal.expected_date_goal >= datetime.now().date() - timedelta(days=91):
+                context['goal_3'].append([goal.id, goal.personal_goal_title, goal.expected_date_goal])
+            # Выбираю сами цели старше 3 месяцев
+            if goal.expected_date_goal is not None and goal.expected_date_goal <= datetime.now().date() - timedelta(days=91):
+                context['goal_all'].append([goal.id, goal.personal_goal_title, goal.expected_date_goal])
+
+        return render(request, 'achievements.html', context)
 

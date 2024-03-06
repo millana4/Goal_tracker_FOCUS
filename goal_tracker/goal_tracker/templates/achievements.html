@@ -1,0 +1,127 @@
+{% extends "base_generic3.html" %}
+
+{% load rest_framework %}
+
+{% block content %}
+
+<h1>Ваши достижения</h1>
+
+{% if theory_3 == False and practice_3 == False and pdp_3 == False and act_3 == False and goal_3 == False and theory_all == False and practice_all == False and pdp_all == False and act_all == False and goal_all == False %}
+    <p>Здесть пока нет достижений. У вас все впереди) </p>
+{% else %}
+
+    {% if theory_3 != False or practice_3 != False or pdp_3 != False or act_3 != False or goal_3 != False %}
+    <h2>За последние 3 месяца</h2>
+
+        {% if theory_3 != False %}
+            {% for theory_obj in theory %}
+                <p>Вы прошли обучение «{{theory_obj.1}}».</p>
+                <br>
+            {% endfor %}
+        {% endif %}
+
+        {% if practice_3 != False %}
+            {% for practice_3_obj in practice_3 %}
+                <p>Вы выполнили практику «{{practice_3_obj.1}}».</p>
+                <br>
+            {% endfor %}
+        {% endif %}
+
+        {% if pdp_3 != False %}
+            {% for pdp_3_obj in pdp_3 %}
+                <p>Вы добились крупного успеха и сделали шаг в карьере — «{{pdp_3_obj.1}}» сделано!</p>
+                <br>
+            {% endfor %}
+        {% endif %}
+
+        {% if act_3 != False %}
+            {% for act_3_obj in act_3 %}
+                <p>Для себя вы сделали «{{act_3_obj.1}}».</p>
+                <br>
+            {% endfor %}
+        {% endif %}
+
+        {% if goal_3 != False %}
+            {% for goal_3_obj in goal_3 %}
+                <p>Вы старались и добились «{{goal_3_obj.1}}». Поздравляем! </p>
+                <br>
+            {% endfor %}
+        {% endif %}
+
+    {% endif %}
+
+    {% if theory_all != False or practice_all != False or pdp_all != False or act_all != False or goal_all != False %}
+    <h2>За все время</h2>
+
+        {% if theory_all != False %}
+            {% for theory_obj in theory_all %}
+                <p>Вы прошли обучение «{{theory_obj.1}}».</p>
+                <br>
+            {% endfor %}
+        {% endif %}
+
+        {% if practice_all != False %}
+            {% for practice_obj in practice_all %}
+                <p>Вы выполнили практику «{{practice_obj.1}}».</p>
+                <br>
+            {% endfor %}
+        {% endif %}
+
+        {% if pdp_all != False %}
+            {% for pdp_obj in pdp_all %}
+                <p>Вы добились крупного успеха и сделали шаг в карьере — «{{pdp_obj.1}}» сделано!</p>
+                <br>
+            {% endfor %}
+        {% endif %}
+
+        {% if act_all != False %}
+            {% for act_obj in act_all %}
+                <p>Для себя вы сделали «{{act_obj.1}}».</p>
+                <br>
+            {% endfor %}
+        {% endif %}
+
+        {% if goal_all != False %}
+            {% for goal_obj in goal_all %}
+                <p>Вы старались и добились «{{goal_obj.1}}». Поздравляем! </p>
+                <br>
+            {% endfor %}
+        {% endif %}
+
+    {% endif %}
+{% endif %}
+
+{% load static %}
+<img
+  src="{% static 'media/congrarulations.jpg' %}"
+  alt="My image"
+  style="width:300px;height:300px;" />
+
+{% endblock %}
+
+
+<!-- Пример переменной контекста
+
+
+{
+    'theory_3': [
+        [4, 'обучение в нетологии', datetime.date(2024, 1, 26)]
+    ],
+    'practice_3': [
+        [3, '222222222222', datetime.date(2024, 2, 23)]
+    ],
+    'pdp_3': [
+        [2, 'джуниором', datetime.date(2024, 1, 10)]
+    ],
+    'act_3': [],
+    'goal_3': [
+        [1, 'хочу луну с неба', datetime.date(2024, 2, 8)]
+    ],
+    'theory_all': [],
+    'practice_all': [],
+    'pdp_all': [],
+    'act_all': [],
+    'goal_all': [
+        [2, 'хочу звезду с неба', datetime.date(2023, 10, 3)]
+    ]
+}
