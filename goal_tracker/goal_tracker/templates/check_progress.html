@@ -1,0 +1,104 @@
+{% extends "base_generic3.html" %}
+
+{% load rest_framework %}
+
+{% block content %}
+
+<h1>Прогресс</h1>
+
+{% if theory == False and practice == False and pdp == False and act == False and goal == False %}
+    <p>Здесть пока нет событий для отметки.</p>
+{% else %}
+
+    {% if theory != False %}
+        {% for theory_obj in theory %}
+            <p>
+                Согласно вашему ИПР, вы хотели пройти обучение «{{theory_obj.1}}» до {{theory_obj.2}}.<br>
+                Пожалуйста, поставьте отметку о выполнении, если прошли. Или поставьте новый срок, если не прошли.
+            </p>
+            <form action="{% url 'competence_update' theory_obj.0 %}" method="GET">
+                    <button>Редактировать</button>
+            </form>
+        {% endfor %}
+    {% endif %}
+
+    {% if practice != False %}
+        {% for practice_obj in practice %}
+            <p>
+                Согласно вашему ИПР, вы хотели пройти практику «{{practice_obj.1}}» до {{practice_obj.2}}.<br>
+                Пожалуйста, поставьте отметку о выполнении, если прошли. Или поставьте новый срок, если не прошли.
+            </p>
+            <form action="{% url 'competence_update' practice_obj.0 %}" method="GET">
+                    <button>Редактировать</button>
+            </form>
+            <br><br>
+        {% endfor %}
+    {% endif %}
+
+    {% if pdp != False %}
+        {% for pdp_obj in pdp %}
+            <p>
+                Согласно вашему ИПР, вы поставили карьерную цель «{{pdp_obj.1}}» до {{pdp_obj.2}}.<br>
+                Пожалуйста, поставьте отметку о выполнении, если все получилось. Если нет, обновите ваш ИПР.
+            </p>
+            <form action="{% url 'pdp_update' pdp_obj.0 %}" method="GET">
+                    <button>Редактировать</button>
+            </form>
+            <br><br>
+        {% endfor %}
+    {% endif %}
+
+    {% if act != False %}
+        {% for act_obj in act %}
+            <p>
+                Согласно списку ваших целей, вы хотели «{{act_obj.1}}» до {{act_obj.2}}.<br>
+                Пожалуйста, поставьте отметку о выполнении, если все получилось. Если нет, обновите срок.
+            </p>
+            <form action="{% url 'personal_action_update' act_obj.0 %}" method="GET">
+                    <button>Редактировать</button>
+            </form>
+            <br><br>
+        {% endfor %}
+    {% endif %}
+
+    {% if goal != False %}
+        {% for goal_obj in goal %}
+            <p>
+                Согласно списку ваших целей, вы хотели «{{goal_obj.1}}» до {{goal_obj.2}}.<br>
+                Пожалуйста, поставьте отметку о выполнении, если все получилось. Если нет, обновите срок.
+            </p>
+            <form action="{% url 'personal_goal' goal_obj.0 %}" method="GET">
+                    <button>Редактировать</button>
+            </form>
+            <br><br>
+        {% endfor %}
+    {% endif %}
+
+
+{% endif %}
+
+{% endblock %}
+
+
+<!-- Пример переменной контекста
+
+{
+    'theory': [
+        [3, 'rdfccd', datetime.date(2024, 1, 26)]
+    ],
+    'practice': [
+        [3, 'rdfccd', datetime.date(2024, 2, 23)]
+    ],
+    'pdp': [
+        [2, 'джуниором', datetime.date(2024, 1, 18)]
+    ],
+    'act': [
+        [4, 'ууууу', datetime.date(2024, 2, 8)]
+    ],
+    'goal': [
+        [1, 'хочу луну с неба', datetime.date(2024, 2, 8)],
+        [2, 'хочу звезду с неба', datetime.date(2024, 2, 1)]
+    ]
+}
+
+-->

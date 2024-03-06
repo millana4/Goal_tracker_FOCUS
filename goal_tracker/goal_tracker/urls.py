@@ -22,7 +22,8 @@ from django.conf import settings
 
 from gtapp.views import MainPage, RegistrUserView, ProfileView, PdpCreateView, CompetenceCreateView, PdpView, \
     PdpDeleteView, PersonalCreateView, PersonalActivityCreateView, PersonalView, PersonalGoalView, IdeaCreateView, \
-    IdeaListView, IdeaView, SettingsView, DownloadView
+    IdeaListView, IdeaView, SettingsView, DownloadView, CheckProgressView, CompetenceUpdateView, PdpUpdateView, \
+    PersonalActivityUpdateView
 
 # from gtapp.views import create_pdp
 
@@ -35,10 +36,13 @@ urlpatterns = [
                   path('profile/', ProfileView.look_profile, name='profile'),
                   path('pdp_creation/', PdpCreateView.as_view(), name='pdp_creation'),
                   path('competence/', CompetenceCreateView.as_view(), name='competence'),
+                  path('competence_update/<int:pk>/', CompetenceUpdateView.as_view(), name='competence_update'),
                   path('pdp/', PdpView.as_view(), name='pdp'),
+                  path('pdp_update/<int:pk>/', PdpUpdateView.as_view(), name='pdp_update'),
                   path('pdp_attention/', PdpDeleteView.as_view(), name='pdp_attention'),
                   path('personal_creation/', PersonalCreateView.as_view(), name='personal_creation'),
                   path('personal_action/', PersonalActivityCreateView.as_view(), name='personal_action'),
+                  path('personal_action/<int:pk>/', PersonalActivityUpdateView.as_view(), name='personal_action_update'),
                   path('personal_list/', PersonalView.as_view(), name='personal'),
                   path('personal_goal/<int:pk>/', PersonalGoalView.as_view(), name='personal_goal'),
                   path('idea_creation/', IdeaCreateView.as_view(), name='idea_creation'),
@@ -47,6 +51,7 @@ urlpatterns = [
 
                   path('settings/', SettingsView.as_view(), name='settings'),
                   path('download/', DownloadView.excel_create, name='download'),
+                  path('check_progress/', CheckProgressView.as_view(), name='check_progress'),
 
                   path('api-auth', include('rest_framework.urls')),
                   path('auth/', include('djoser.urls')),

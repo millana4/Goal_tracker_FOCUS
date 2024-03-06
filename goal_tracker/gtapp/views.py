@@ -7,7 +7,8 @@ from django.core.cache import cache
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.generics import CreateAPIView, ListCreateAPIView, ListAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import CreateAPIView, ListCreateAPIView, ListAPIView, RetrieveUpdateDestroyAPIView, \
+    RetrieveUpdateAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.renderers import TemplateHTMLRenderer
 
@@ -17,6 +18,7 @@ from .serializers import RegistrUserSerializer, PdpCreationSerializer, Competenc
     IdeaSerializer
 
 import xlwt
+from datetime import datetime
 
 
 # --- ГЛАВНАЯ ---
@@ -142,6 +144,12 @@ class PersonalGoalView(RetrieveUpdateDestroyAPIView):
     queryset = Personal_goal.objects.all()
     serializer_class = PersonalGoalSerializer
 
+# Представление, где можно будет редактировать действия для личных целей после перехода со страницы отметок о прогрессе.
+class PersonalActivityUpdateView(RetrieveUpdateAPIView):
+    queryset = Personal_activity.objects.all()
+    serializer_class = PersonalActivityCreationSerializer
+
+
 
 # --- РАБОТА С ИПР И КАРЬЕРНЫМИ ЦЕЛЯМИ ---
 
@@ -193,6 +201,16 @@ class CompetenceCreateView(CreateAPIView):
         # Сохраняю компетенцию и указываю что она относится к последнему ИПР пользователя
         serializer.save(pdp=Pdp.objects.filter(user=request.user.id).last())
         return redirect('competence')
+
+# Представление, где можно будет редактировать компетенцию после перехода со страницы с отметками о прогрессе.
+class CompetenceUpdateView(RetrieveUpdateAPIView):
+    queryset = Сompetence.objects.all()
+    serializer_class = CompetenceCreationSerializer
+
+# Представление, где можно будет редактировать ИПР после перехода со страницы с отметками о прогрессе.
+class PdpUpdateView(RetrieveUpdateAPIView):
+    queryset = Pdp.objects.all()
+    serializer_class = PdpCreationSerializer
 
 
 # Представление для просмотра ИПР
@@ -415,4 +433,61 @@ class DownloadView():
         return response
 
 
+# --- ОТСЛЕЖИВАНИЕ ПРОГРЕССА ---
+# Представление выбирает события, дата по которым уже прошла, но которые при этом не отмечены как выполненные,
+# и спрашивет, выполнил пользователь задачу или нет. Пользователь может отметить задачу как выполненную
+# или передвинуть срок.
+
+class CheckProgressView(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'check_progress.html'
+
+    # Получаю события, о которых надо опросить пользователя — дата прошла, но события не отмечены как выполненные.
+    def get(self, request):
+        # Закрываю страницу для неавторизованных пользователей
+        if not request.user.is_authenticated:
+            return HttpResponse(content='Вы не авторизованы. Войдите в систему.', status=403)
+
+        # Создаю словарь с данными, который потом передам в шаблон
+        context = {}
+        context['theory'] = []
+        context['practice'] = []
+        context['pdp'] = []
+        context['act'] = []
+        context['goal'] = []
+
+        # Получаю информацию о компетенциях
+        # Сначала получаю ИПР пользователя, чтобы потом по id ИПР найти компетенции
+        pdps = Pdp.objects.filter(user=request.user.id)
+
+        for pdp in pdps:
+            # Выбираю компетенциии c обучениями, которые должны быть пройдены
+            competencies = Сompetence.objects.filter(pdp=pdp.id, theory_done=False)
+            for compet in competencies:
+                if compet.theory_exp_date is not None and compet.theory_exp_date <= datetime.now().date():
+                    context['theory'].append([compet.id, compet.competence, compet.theory_exp_date])
+            # Выбираю компетенциии c практиками, которые должны быть выполнены
+            competencies = Сompetence.objects.filter(pdp=pdp.id, practice_done=False)
+            for compet in competencies:
+                if compet.practice_exp_date is not None and compet.practice_exp_date <= datetime.now().date():
+                    context['practice'].append([compet.id, compet.competence, compet.practice_exp_date])
+            # Выбираю сами карьерные цели, которые должны быть реализованы на дату запроса
+            if pdp.expected_date is not None and pdp.expected_date <= datetime.now().date():
+                context['pdp'].append([pdp.id, pdp.pdp_title, pdp.expected_date])
+
+        # Получаю информацию о личных целях и активностях по ним
+        # Сначала получаю цели пользователя, чтобы потом по id найти действия
+        goals = Personal_goal.objects.filter(user=request.user.id)
+
+        for goal in goals:
+            # Выбираю связанные с целями действия, которые должны быть сделаны
+            acts = Personal_activity.objects.filter(personal_goal=goal.id, regular_one_time='one time', done=False)
+            for act in acts:
+                if act.expected_date is not None and act.expected_date <= datetime.now().date():
+                    context['act'].append([act.id, act.personal_activity, act.expected_date])
+            # Выбираю сами цели, которые должны быть реализованы на дату запроса
+            if goal.expected_date_goal is not None and goal.expected_date_goal <= datetime.now().date():
+                context['goal'].append([goal.id, goal.personal_goal_title, goal.expected_date_goal])
+
+        return render(request, 'check_progress.html', context)
 
