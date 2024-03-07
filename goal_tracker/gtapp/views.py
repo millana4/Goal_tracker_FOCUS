@@ -13,8 +13,8 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.renderers import TemplateHTMLRenderer
 
 from .models import User, Pdp, Personal_goal, Personal_activity, Idea, Сompetence
-from .serializers import RegistrUserSerializer, PdpCreationSerializer, CompetenceCreationSerializer, \
-    PersonalCreationSerializer, PersonalActivityCreationSerializer, PersonalSerializer, PersonalGoalSerializer, \
+from .serializers import RegistrUserSerializer, PdpSerializer, CompetenceSerializer, \
+    PersonalCreationSerializer, PersonalActivitySerializer, PersonalSerializer, PersonalGoalSerializer, \
     IdeaSerializer
 
 import xlwt
@@ -147,7 +147,7 @@ class PersonalGoalView(RetrieveUpdateDestroyAPIView):
 # Представление, где можно будет редактировать действия для личных целей после перехода со страницы отметок о прогрессе.
 class PersonalActivityUpdateView(RetrieveUpdateAPIView):
     queryset = Personal_activity.objects.all()
-    serializer_class = PersonalActivityCreationSerializer
+    serializer_class = PersonalActivitySerializer
 
 
 
@@ -162,7 +162,7 @@ class PdpCreateView(APIView):
         # Закрываю страницу для неавторизованных пользователей
         if not request.user.is_authenticated:
             return HttpResponse(content='Вы не авторизованы. Войдите в систему.', status=403)
-        serializer = PdpCreationSerializer()
+        serializer = PdpSerializer()
         return Response({'serializer': serializer})
 
     def post(self, request):
@@ -170,7 +170,7 @@ class PdpCreateView(APIView):
         if not request.user.is_authenticated:
             return HttpResponse(content='Вы не авторизованы. Войдите в систему.', status=403)
         # Получаю данные пользователя из сериалайзера
-        serializer = PdpCreationSerializer(data=request.data)
+        serializer = PdpSerializer(data=request.data)
         if not serializer.is_valid():
             return Response({'serializer': serializer})
         # Сохраняю pdp
@@ -187,7 +187,7 @@ class CompetenceCreateView(CreateAPIView):
         # Закрываю страницу для неавторизованных пользователей
         if not request.user.is_authenticated:
             return HttpResponse(content='Вы не авторизованы. Войдите в систему.', status=403)
-        serializer = CompetenceCreationSerializer()
+        serializer = CompetenceSerializer()
         return Response({'serializer': serializer})
 
     def post(self, request):
@@ -195,7 +195,7 @@ class CompetenceCreateView(CreateAPIView):
         if not request.user.is_authenticated:
             return HttpResponse(content='Вы не авторизованы. Войдите в систему.', status=403)
         # Получаю данные пользователя из сериалайзера
-        serializer = CompetenceCreationSerializer(data=request.data)
+        serializer = CompetenceSerializer(data=request.data)
         if not serializer.is_valid():
             return Response({'serializer': serializer})
         # Сохраняю компетенцию и указываю что она относится к последнему ИПР пользователя
@@ -205,12 +205,12 @@ class CompetenceCreateView(CreateAPIView):
 # Представление, где можно будет редактировать компетенцию после перехода со страницы с отметками о прогрессе.
 class CompetenceUpdateView(RetrieveUpdateAPIView):
     queryset = Сompetence.objects.all()
-    serializer_class = CompetenceCreationSerializer
+    serializer_class = CompetenceSerializer
 
 # Представление, где можно будет редактировать ИПР после перехода со страницы с отметками о прогрессе.
 class PdpUpdateView(RetrieveUpdateAPIView):
     queryset = Pdp.objects.all()
-    serializer_class = PdpCreationSerializer
+    serializer_class = PdpSerializer
 
 
 # Представление для просмотра ИПР
@@ -285,6 +285,7 @@ class IdeaView(RetrieveUpdateDestroyAPIView):
 
 
 # --- НАСТРОЙКА УВЕДОМЛЕНИЙ НА EMAIL ---
+
 # В этом представлении пользователь может указать, хочет ли он получать уведомления на почту или будет ходить на сайт и
 # отслеживать все события вручную.
 class SettingsView(APIView):
@@ -332,6 +333,7 @@ class SettingsView(APIView):
 
 
 # --- ВЫГРУЗКА ДАННЫХ ---
+
 # Выгружает все данные пользователя в Excel-файл — карьерные цели, личные цели и заметки с идеями.
 class DownloadView():
     def excel_create(request):
@@ -434,6 +436,7 @@ class DownloadView():
 
 
 # --- ОТСЛЕЖИВАНИЕ ПРОГРЕССА ---
+
 # Представление выбирает события, дата по которым уже прошла, но которые при этом не отмечены как выполненные,
 # и спрашивет, выполнил пользователь задачу или нет. Пользователь может отметить задачу как выполненную
 # или передвинуть срок.
@@ -492,7 +495,7 @@ class CheckProgressView(APIView):
         return render(request, 'check_progress.html', context)
 
 
-# --- ОТСЛЕЖИВАНИЕ ПРОГРЕССА ---
+# --- ДОСТИЖЕНИЯ ---
 # В предатавлении пользователь может посмотреть свои достижения за последние три месяца и за все время. Поиск идет
 # по моделям ИПР и личным целям и связанным с ними. Выводятся все объекты со татусом «Сделано».
 

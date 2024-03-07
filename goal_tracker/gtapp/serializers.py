@@ -50,8 +50,8 @@ class PersonalCreationSerializer(serializers.ModelSerializer):
         # Назначаем поля которые будем использовать
         fields = ['personal_goal_title', 'personal_goal_smart', 'expected_date_goal', 'user']
 
-# Сериализатор для создания действий, привязанных к личныя целям
-class PersonalActivityCreationSerializer(serializers.ModelSerializer):
+# Сериализатор для создания и редактирования действий, привязанных к личныя целям
+class PersonalActivitySerializer(serializers.ModelSerializer):
     class Meta:
         # Модель, которую будем использовать
         model = Personal_activity
@@ -80,8 +80,8 @@ class PersonalGoalSerializer(serializers.ModelSerializer):
 
 # --- РАБОТА С ИПР И КАРЬЕРНЫМИ ЦЕЛЯМИ ---
 
-# Сериализатор для создания ИПР
-class PdpCreationSerializer(serializers.ModelSerializer):
+# Сериализатор для создания и редактирования ИПР
+class PdpSerializer(serializers.ModelSerializer):
     # Это чтобы при создании ИПР автоматически указывать пользователя
     user = serializers.PrimaryKeyRelatedField(read_only=True)
 
@@ -92,8 +92,8 @@ class PdpCreationSerializer(serializers.ModelSerializer):
         fields = ['pdp_title', 'smart', 'expected_date', 'done', 'user']
 
 
-# Сериализатор для создания компетенций к добавления их к ИПР
-class CompetenceCreationSerializer(serializers.ModelSerializer):
+# Сериализатор для создания и редактирования компетенций к добавления их к ИПР
+class CompetenceSerializer(serializers.ModelSerializer):
     pdp = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
