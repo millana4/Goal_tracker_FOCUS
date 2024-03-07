@@ -12,7 +12,8 @@
 
 *Прим. — Система рассылки пока не реализована.* 
 ##  Стек технологий
-Django, DjangoRestFramework, PostgreSQL, Bootstrap, HTML.
+Технологии: **Django, DjangoRestFramework, PostgreSQL, Bootstrap, HTML.**
+
 Работа с ИПР реализована на DjangoRestFramework с выводом в HTML. Фронтенд на Bootstrap.
 Работа с личными целями и идеями реализована на DjangoRestFramework с выводом ответов в стиле API.
 Есть выгрузка всех данных пользователя в Excel-файл. 
